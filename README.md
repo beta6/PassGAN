@@ -5,7 +5,7 @@ This repository contains code for the [_PassGAN: A Deep Learning Approach for Pa
 The model from PassGAN is taken from [_Improved Training of Wasserstein GANs_](https://arxiv.org/abs/1704.00028) and it is assumed that the authors of PassGAN used the [improved_wgan_training](https://github.com/igul222/improved_wgan_training) tensorflow implementation in their work. For this reason, I have modified that reference implementation in this repository to make it easy to train (`train.py`) and sample (`sample.py`) from. This repo contributes:
 
 - A command-line interface
-- I have made several improvements to conserve memory during the loading and filtering of wordlists. 
+- I have made several improvements to conserve enough free memory during the loading and filtering of wordlists. 
 - Additionally, I have implemented various fixes to ensure compatibility with recent TensorFlow versions. 
 - Furthermore, I have removed unused code from the original transfer learning implementation.
 - A pretrained PassGAN model trained on the RockYou dataset
