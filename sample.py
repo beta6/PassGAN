@@ -71,53 +71,66 @@ def parse_args():
 
     return args
 
-args = parse_args()
 
-with open(os.path.join(args.input_dir, 'charmap.pickle'), 'rb') as f:
-    charmap = pickle.load(f)
 
-with open(os.path.join(args.input_dir, 'inv_charmap.pickle'), 'rb') as f:
-    inv_charmap = pickle.load(f)
+def getmaps(args):
 
-fake_inputs = models.Generator(args.batch_size, args.seq_length, args.layer_dim, len(charmap))
+    with open(os.path.join(args.input_dir, 'charmap.pickle'), 'rb') as f:
+        charmap = pickle.load(f)
 
-with tf.Session() as session:
+    with open(os.path.join(args.input_dir, 'inv_charmap.pickle'), 'rb') as f:
+        inv_charmap = pickle.load(f)
 
-    def generate_samples():
-        samples = session.run(fake_inputs)
-        samples = np.argmax(samples, axis=2)
-        decoded_samples = []
-        for i in range(len(samples)):
-            decoded = []
-            for j in range(len(samples[i])):
-                decoded.append(inv_charmap[samples[i][j]])
-            decoded_samples.append(tuple(decoded))
-        return decoded_samples
+    return charmap, inv_charmap
 
-    def save(samples):
-        with open(args.output, 'a') as f:
-                for s in samples:
-                    s = "".join(s).replace('`', '')
-                    f.write(s + "\n")
 
-    saver = tf.train.Saver()
-    saver.restore(session, args.checkpoint)
+if __name__ == "__main__":
 
-    samples = []
-    then = time.time()
-    start = time.time()
-    for i in range(int(args.num_samples / args.batch_size)):
-        
-        samples.extend(generate_samples())
+    args = parse_args()
 
-        # append to output file every 1000 batches
-        if i % 1000 == 0 and i > 0: 
+    charmap, inv_charmap = getmaps(args)
+
+    print(charmap, inv_charmap)
+
+    fake_inputs = models.Generator(args.batch_size, args.seq_length, args.layer_dim, len(charmap))
+
+    with tf.Session() as session:
+
+        def generate_samples():
+            samples = session.run(fake_inputs)
+            samples = np.argmax(samples, axis=2)
+            decoded_samples = []
+            for i in range(len(samples)):
+                decoded = []
+                for j in range(len(samples[i])):
+                    decoded.append(inv_charmap[samples[i][j]])
+                decoded_samples.append(tuple(decoded))
+            return decoded_samples
+
+        def save(samples):
+            with open(args.output, 'a') as f:
+                    for s in samples:
+                        s = "".join(s).replace('`', '')
+                        f.write(s + "\n")
+
+        saver = tf.train.Saver()
+        saver.restore(session, args.checkpoint)
+
+        samples = []
+        then = time.time()
+        start = time.time()
+        for i in range(int(args.num_samples / args.batch_size)):
             
-            save(samples)
-            samples = [] # flush
+            samples.extend(generate_samples())
 
-            print('wrote {} samples to {} in {:.2f} seconds. {} total.'.format(1000 * args.batch_size, args.output, time.time() - then, i * args.batch_size))
-            then = time.time()
-    
-    save(samples)
-    print('finished in {:.2f} seconds'.format(time.time() - start))
+            # append to output file every 1000 batches
+            if i % 1000 == 0 and i > 0: 
+                
+                save(samples)
+                samples = [] # flush
+
+                print('wrote {} samples to {} in {:.2f} seconds. {} total.'.format(1000 * args.batch_size, args.output, time.time() - then, i * args.batch_size))
+                then = time.time()
+        
+        save(samples)
+        print('finished in {:.2f} seconds'.format(time.time() - start))
