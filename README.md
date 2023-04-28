@@ -1,18 +1,17 @@
-# PassGAN
+ PassGAN
 
 This repository contains code for the [_PassGAN: A Deep Learning Approach for Password Guessing_](https://arxiv.org/abs/1709.00440) paper. 
 
 The model from PassGAN is taken from [_Improved Training of Wasserstein GANs_](https://arxiv.org/abs/1704.00028) and it is assumed that the authors of PassGAN used the [improved_wgan_training](https://github.com/igul222/improved_wgan_training) tensorflow implementation in their work. For this reason, I have modified that reference implementation in this repository to make it easy to train (`train.py`) and sample (`sample.py`) from. This repo contributes:
 
 - A command-line interface
-- I have made some improvements to save some memory on loading and filtering wordlists
-- and made some fixes to make it work on recent tensorflow versions
-- I cleared unused code from original transfer learning implementation
+- I have made several improvements to conserve memory during the loading and filtering of wordlists. 
+- Additionally, I have implemented various fixes to ensure compatibility with recent TensorFlow versions. 
+- Furthermore, I have removed unused code from the original transfer learning implementation.
 - A pretrained PassGAN model trained on the RockYou dataset
 - A pretrained PassGAN model trained on the darkc0de+openwall+xato-net-10M dataset 11 chars
 - A pretrained PassGAN model trained on the crackstation-only-human dataset 10 chars
 
-For better performance in cracking you can mix the original wordlist with the generated one and make unique passwords because model repeats some words in big generations and does not include original list words
 
 ## Getting Started
 
@@ -58,9 +57,11 @@ python sample.py \
 	--num-samples 100000000
 ```
 
+For enhanced cracking performance, you can combine the original wordlist with the generated one to create unique passwords. This is because the model tends to repeat some words in large generations and does not include words from the original list.
+
 ### Training your own models
 
-Training a model on a large dataset (100MB+) can take several hours on a GTX 1080. (10+h)
+Training a model on a large dataset (100MB+) can take several hours on a GTX 1080. (9+h)
 
 ```bash
 # download the rockyou training data
