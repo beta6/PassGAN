@@ -90,8 +90,6 @@ if __name__ == "__main__":
 
     charmap, inv_charmap = getmaps(args)
 
-    print(charmap, inv_charmap)
-
     fake_inputs = models.Generator(args.batch_size, args.seq_length, args.layer_dim, len(charmap))
 
     with tf.Session() as session:
