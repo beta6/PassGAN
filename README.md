@@ -59,6 +59,9 @@ python sample.py \
 
 For enhanced cracking performance, you can combine the original wordlist with the generated one to create unique passwords. This is because the model tends to repeat some words in large generations and does not include words from the original list.
 
+The default value for --seq-length is 10. In the commonu11 case, the seq-length should always be set to 11, which corresponds to the training character length. If you train your own dataset with a longer length, you must adjust the seq-length to match the length used during training when using sample.py.
+
+
 ### Training your own models
 
 Training a model on a large dataset (100MB+) can take several hours on a GTX 1080. (9+h)
